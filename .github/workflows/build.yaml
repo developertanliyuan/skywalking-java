@@ -1,0 +1,41 @@
+name: Java Build
+
+on:
+  push:
+    branches:
+      - 9.1.0-dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.2
+
+      - name: Initialize git submodule
+        run: git submodule init
+
+      - name: Update git submodule
+        run: git submodule update
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests -Dcheckstyle.skip
+
+      - name: Navigate to target directory
+        run: |
+          cd target
+          echo "Current directory: $(pwd)"
+          ls -la
+#          mv apache-skywalking-apm-bin.tar.gz ~/apache-skywalking-apm-bin.tar.gz
+#
+#      - name: Upload Artifact
+#        uses: actions/upload-artifact@v4.3.1
+#        with:
+#          name: apache-skywalking-apm-bin.tar.gz
+#          path: ~/apache-skywalking-apm-bin.tar.gz
